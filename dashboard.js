@@ -21,7 +21,7 @@ function qMonths(p){const[y,m]=p.split('-').map(Number);const s=m-((m-1)%3);retu
 function docs(){return get('docs',[])}
 function docsFor(type,p){const d=docs();if(type==='IFF')return d.filter(x=>x.per===p&&x.src==='IFF');if(U.filing==='Quarterly'&&type==='GSTR-1')return d.filter(x=>qMonths(p).includes(x.per)&&x.src!=='IFF');return d.filter(x=>x.per===p&&x.src!=='IFF')}
 function taxOf(val,rate,pos,cess){const t=val*rate/100;const o=pos===U.state?{igst:0,cgst:t/2,sgst:t/2}:{igst:t,cgst:0,sgst:0};o.cess=+cess||0;return o}
-function sumDocs(list){const s={val:0,...zero()};list.forEach(d=>{const sg=d.tbl==='9B'&&d.ntype==='C'?-1:1;s.val+=sg*d.val;H.forEach(h=>s[h]+=sg*(d[h]||0))});return s}
+function sumDocs(list){const s={val:0,...zero()};list.forEach(d=>{const sg=d.tbl==='9B'&&d.ntype==='C'?-1:1;if(d.cancelled)return;s.val+=sg*d.val;H.forEach(h=>s[h]+=sg*(d[h]||0))});return s}
 function dueDate(type,p){if(type==='GSTR-1')return nextMonth(p,U.filing==='Quarterly'?13:11);if(type==='IFF')return nextMonth(p,13);if(type==='GSTR-3B')return nextMonth(p,U.filing==='Quarterly'?22:20);if(type==='CMP-08')return nextMonth(p,18);return p.slice(0,4)+'-04-30'}
 /* ---------- state & menu ---------- */
 let S={p:(()=>{const d=new Date();d.setMonth(d.getMonth()-1);return d.toISOString().slice(0,7)})(),sub:null};
@@ -55,23 +55,23 @@ return card('File Returns',periodPicker()+`<div class="note">Tax period: <b>${pe
 /* ---------- GSTR-1 / IFF ---------- */
 let R1;
 function open1(type){R1={type,p:S.p};$('main').innerHTML=view1();}
-function view1(){const{type,p}=R1,isF=!!filed(type,p),list=docsFor(type,p),tbls=type==='IFF'?['4A','9B']:['4A','5','7','9B'];
-const TN={'4A':'4A, 4B, 6B, 6C - B2B, SEZ, DE Invoices','5':'5 - B2C (Large) Invoices','7':'7 - B2C (Others)','9B':'9B - Credit / Debit Notes (Registered)'};
+function view1(){const{type,p}=R1,isF=!!filed(type,p),list=docsFor(type,p),tbls=type==='IFF'?['4A','9B','9A','9C']:['4A','5','7','9B','9A','9C'];
+const TN={'4A':'4A, 4B, 6B, 6C - B2B, SEZ, DE Invoices','5':'5 - B2C (Large) Invoices','7':'7 - B2C (Others)','9B':'9B - Credit / Debit Notes (Registered)','9A':'9A - Amended B2B Invoices','9C':'9C - Amended Credit / Debit Notes (Registered)'};
 const rng=type==='GSTR-1'&&U.filing==='Quarterly'?qMonths(p):[p];
 const add=isF?'<div class="msg">This return has been filed. Details cannot be edited.</div>':`<h4>Add Record</h4><div class="row"><div><label>Table *</label><select id="d_tbl" onchange="docForm()">${tbls.map(t=>`<option value="${t}">${TN[t]}</option>`)}</select></div></div><div id="dform"></div>`;
 const tblsHTML=tbls.map(t=>{const l=list.filter(d=>d.tbl===t),s=sumDocs(l);return `<tr><td>${TN[t]}</td><td>${l.length}</td><td>${f(s.val)}</td>${H.map(h=>`<td>${f(s[h])}</td>`).join('')}</tr>`}).join('');
-const hsn={};list.forEach(d=>{const k=d.hsn+'|'+d.rate;hsn[k]=hsn[k]||{hsn:d.hsn,rate:d.rate,val:0,...zero()};const sg=d.tbl==='9B'&&d.ntype==='C'?-1:1;hsn[k].val+=sg*d.val;H.forEach(h=>hsn[k][h]+=sg*(d[h]||0))});
+const hsn={};list.forEach(d=>{if(d.orig)return;const k=d.hsn+'|'+d.rate;hsn[k]=hsn[k]||{hsn:d.hsn,rate:d.rate,val:0,...zero()};const sg=d.tbl==='9B'&&d.ntype==='C'?-1:1;hsn[k].val+=sg*d.val;H.forEach(h=>hsn[k][h]+=sg*(d[h]||0))});
 setTimeout(()=>{if(!isF)docForm()},0);
 return card(`${type==='IFF'?'Invoice Furnishing Facility (IFF)':'GSTR-1 - Details of outward supplies of goods or services'} — ${periodLabel(p)}${type==='GSTR-1'&&U.filing==='Quarterly'?' (Quarter)':''}`,`<p>GSTIN ${G} · Legal name ${esc(U.legal)} · FY ${fyOf(p)} · Status: <span class="st ${isF?'Filed':'NotFiled'}">${isF?'Filed':'Not Filed'}</span></p>${add}
 <h4>Records added (${list.length})</h4><table><tr><th>Table</th><th>No./Date</th><th>Recipient</th><th>POS</th><th>Rate</th><th>Taxable value</th>${H.map(h=>`<th>${HN[h]}</th>`).join('')}<th></th></tr>
-${list.map(d=>`<tr><td>${d.tbl}${d.ntype?' ('+(d.ntype==='C'?'Credit':'Debit')+' Note)':''}</td><td>${esc(d.no)}<br>${d.date}</td><td>${d.rg||'Unregistered'}</td><td>${d.pos}</td><td>${d.rate}%</td><td>${f(d.val)}</td>${H.map(h=>`<td>${f(d[h])}</td>`).join('')}<td>${isF?'':`<button onclick="delDoc('${d.id}')">✕</button>`}</td></tr>`).join('')||'<tr><td colspan=10>No records</td></tr>'}</table>
+${list.map(d=>`<tr><td>${d.tbl}${d.ntype?' ('+(d.ntype==='C'?'Credit':'Debit')+' Note)':''}</td><td>${esc(d.no)}${d.orig?'<br><small>amends '+esc(d.origNo)+' ('+d.origPer+')</small>':''}${d.irn?'<br><small>IRN ✓</small>':''}<br>${d.date}</td><td>${d.rg||'Unregistered'}</td><td>${d.pos}</td><td>${d.rate}%</td><td>${f(d.val)}</td>${H.map(h=>`<td>${f(d[h])}</td>`).join('')}<td>${isF||d.irn?'':`<button onclick="delDoc('${d.id}')">✕</button>`}</td></tr>`).join('')||'<tr><td colspan=10>No records</td></tr>'}</table>
 <h4>Summary (Generate ${type} Summary)</h4><table><tr><th>Description</th><th>No. of records</th><th>Value</th>${H.map(h=>`<th>${HN[h]}</th>`).join('')}</tr>${tblsHTML}</table>
 ${type==='GSTR-1'?`<h4>12 - HSN-wise summary of outward supplies (auto)</h4><table><tr><th>HSN</th><th>Rate</th><th>Taxable value</th>${H.map(h=>`<th>${HN[h]}</th>`).join('')}</tr>${Object.values(hsn).map(x=>`<tr><td>${x.hsn}</td><td>${x.rate}%</td><td>${f(x.val)}</td>${H.map(h=>`<td>${f(x[h])}</td>`).join('')}</tr>`).join('')}</table>
 <h4>13 - Documents issued (auto)</h4><p>Invoices for outward supply: ${list.filter(d=>d.tbl!=='9B').length} · Credit/Debit notes: ${list.filter(d=>d.tbl==='9B').length} · Cancelled: 0</p>`:''}
 ${isF?`<p>ARN: <b>${filed(type,p).arn}</b> filed on ${filed(type,p).date}</p>`:`<hr><label><input type="checkbox" id="r1decl"> I hereby solemnly affirm and declare that the information given herein above is true and correct to the best of my knowledge and belief.</label>
 <label>Authorised Signatory *</label><select id="r1as"><option>${esc(U.as.name)}</option></select><br><button class="btn" disabled title="Not available in practice">FILE WITH DSC</button> <button class="btn s" onclick="file1()">FILE WITH EVC</button>`}
 <br><br><button class="btn" onclick="show('Returns Dashboard')">BACK TO DASHBOARD</button>`,type==='IFF'?'gstr1':'gstr1')}
-function docForm(){if(!$('d_tbl'))return;const t=$('d_tbl').value,rng=R1.type==='GSTR-1'&&U.filing==='Quarterly'?qMonths(R1.p):[R1.p];const st=Object.entries(STATES).map(([c,n])=>`<option value="${c}" ${c===U.state?'selected':''}>${c}-${n}</option>`).join('');
+function docForm(){if(!$('d_tbl'))return;if(['9A','9C'].includes($('d_tbl').value))return amendForm();const t=$('d_tbl').value,rng=R1.type==='GSTR-1'&&U.filing==='Quarterly'?qMonths(R1.p):[R1.p];const st=Object.entries(STATES).map(([c,n])=>`<option value="${c}" ${c===U.state?'selected':''}>${c}-${n}</option>`).join('');
 const reg=t==='4A'||t==='9B';const rate=`<select id="d_rate">${[0,0.25,3,5,12,18,28,40].map(r=>`<option ${r===18?'selected':''}>${r}</option>`)}</select>`;
 $('dform').innerHTML=`<div class="row">${reg?`<div><label>Recipient GSTIN/UIN *</label><input id="d_rg" oninput="this.value=this.value.toUpperCase();const u=userBy(this.value);$('d_rn').value=u?u.legal:''"></div><div><label>Recipient Name</label><input id="d_rn" placeholder="auto if in practice DB"></div>`:''}
 ${t!=='7'?`<div><label>${t==='9B'?'Note':'Invoice'} No. * (max 16 chars)</label><input id="d_no" maxlength="16"></div><div><label>${t==='9B'?'Note':'Invoice'} Date *</label><input type="date" id="d_date" min="${rng[0]}-01" max="${rng[rng.length-1]}-31"></div>`:`<div><label>Month *</label><select id="d_mon">${rng.map(m=>`<option>${m}</option>`)}</select></div>`}
@@ -227,4 +227,4 @@ V['Amendment of Registration (Non-Core)']=()=>card('Amendment of Registration No
 <label>Proof of details of bank account (PDF/JPEG, max 1 MB)</label><input type="file"><label><input type="checkbox" id="bdecl"> I hereby declare the information is true and correct.</label><p class="err" id="be"></p><button class="btn s" onclick="amendBank()">SUBMIT WITH EVC</button>`,'registration');
 function amendBank(){const e=[];if(!/^\d{9,18}$/.test($('ba').value))e.push('Account number: 9-18 digits');if(!/^[A-Z]{4}0[A-Z0-9]{6}$/.test($('bi2').value))e.push('IFSC format: 4 letters + 0 + 6 characters');if(!$('bdecl').checked)e.push('Declaration');$('be').innerHTML=e.join('<br>');if(e.length)return;
 if(!evc('non-core amendment'))return;U.bank={acc:$('ba').value,ifsc:$('bi2').value,type:$('bt').value};saveU();alert('Non-core amendment submitted. ARN AA'+U.state+rnd(10)+'A — non-core changes are approved automatically (practice).');show('My Profile')}
-const h0=decodeURIComponent(location.hash.slice(1));show(V[h0]?h0:'Dashboard');
+
