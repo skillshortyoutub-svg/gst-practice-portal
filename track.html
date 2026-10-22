@@ -8,7 +8,7 @@
 <div class="card" id="payment"><h2>Track Payment Status <a class="help" href="help.html#payments">? Help</a></h2><p class="crumb">Services › Payments › Track Payment Status</p>
 <div class="row"><div><label>GSTIN / Other Id *</label><input id="pg"></div><div><label>CPIN *</label><input id="pc" maxlength="14"></div></div><br><button class="btn s" onclick="trackPay()">TRACK STATUS</button><div id="pres"></div></div>
 </div>
-<script src="common.js"></script><script>layout();
+<script src="common.js"></script><script src="sample.js"></script><script>layout();
 let C;function nc(){C=captcha();$('cap').textContent=C}nc();
 const qs=new URLSearchParams(location.search);if(qs.get('arn')){$('q').value=qs.get('arn')}
 function search(){const v=$('q').value.trim().toUpperCase(),by=document.querySelector('[name=by]:checked').value;if($('c').value.trim().toUpperCase()!==C){$('e').textContent='Enter valid characters shown in the image';nc();return}$('e').textContent='';

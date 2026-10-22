@@ -52,11 +52,11 @@ function helpLink(id){return `<a class="help" href="help.html#${id}" target="_bl
 function userBy(g){return DB.get('users',[]).find(u=>u.gstin===g)}
 function retFiled(g){return DB.get(g+'_returns',[])}
 function tpDetails(u){return `<table><tr><th>GSTIN/UIN</th><td>${u.gstin}</td></tr><tr><th>Legal Name of Business</th><td>${esc(u.legal)}</td></tr><tr><th>Trade Name</th><td>${esc(u.b.trade)}</td></tr>
-<tr><th>Effective Date of registration</th><td>${u.effDate}</td></tr><tr><th>Constitution of Business</th><td>${u.b.const}</td></tr><tr><th>GSTIN / UIN Status</th><td>${u.status||'Active'}</td></tr>
+<tr><th>Effective Date of registration</th><td>${u.effDate}</td></tr><tr><th>Constitution of Business</th><td>${u.b.const}</td></tr><tr><th>GSTIN / UIN Status</th><td><span class="st ${(u.status||'Active')==='Active'?'Active':'Rejected'}">${u.status||'Active'}</span></td></tr>${u.cancelDate?`<tr><th>Date of Cancellation</th><td>${u.cancelDate}</td></tr>`:''}
 <tr><th>Taxpayer Type</th><td>${u.b.comp==='Yes'?'Composition':'Regular'}</td></tr><tr><th>Administrative Office</th><td>STATE - ${STATES[u.state]} (practice jurisdiction: ${esc(u.ppob.ward)})</td></tr>
 <tr><th>Principal Place of Business</th><td>${esc(u.ppob.addr)}, ${esc(u.ppob.city)}, ${STATES[u.state]}, ${u.ppob.pin}</td></tr><tr><th>Nature of Business Activities</th><td>${(u.ppob.nature||[]).join(', ')}</td></tr></table>
 <br><button class="btn s" onclick="this.nextElementSibling.classList.toggle('hide')">SHOW FILING TABLE</button><div class="hide"><table><tr><th>Return Type</th><th>Tax Period</th><th>Date of Filing</th><th>Status</th></tr>
-${retFiled(u.gstin).map(r=>`<tr><td>${r.type}</td><td>${r.period}</td><td>${r.date}</td><td>${r.status}</td></tr>`).join('')||'<tr><td colspan=4>No returns filed yet</td></tr>'}</table></div>`}
+${retFiled(u.gstin).map(r=>`<tr><td>${r.type}</td><td>${r.period}</td><td>${r.date}</td><td><span class="st ${r.status==='Filed'?'Filed':'NotFiled'}">${r.status}${r.late?' (late)':''}</span></td></tr>`).join('')||'<tr><td colspan=4>No returns filed yet</td></tr>'}</table></div>`}
 function searchTP(g){g=(g||'').toUpperCase().trim();if(!GSTIN_RE.test(g))return '<p class="err">Enter a valid 15-character GSTIN/UIN.</p>';if(!validGSTIN(g))return '<p class="err">Invalid GSTIN: check digit mismatch.</p>';
 const u=userBy(g);return u?tpDetails(u):'<p>No records found for this GSTIN in the practice database.</p>'}
 function searchPAN(p){p=(p||'').toUpperCase().trim();if(!PAN_RE.test(p))return '<p class="err">Enter a valid PAN (e.g. ABCPE1234F).</p>';const us=DB.get('users',[]).filter(u=>u.pan===p);

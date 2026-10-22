@@ -13,7 +13,7 @@
 <label>New Password *</label><input id="np" type="password"><div class="note">8-15 characters with at least 1 uppercase, 1 lowercase, 1 number and 1 special character.</div>
 <label>Re-confirm Password *</label><input id="np2" type="password"><p class="err" id="ne"></p><button class="btn s" onclick="setCred()">SUBMIT</button></div>
 </div>
-<script src="common.js"></script><script>layout();let C,C2,FU;function nc(){C=captcha();$('cap').textContent=C;C2=captcha();$('cap2').textContent=C2}nc();
+<script src="common.js"></script><script src="sample.js"></script><script>layout();let C,C2,FU;function nc(){C=captcha();$('cap').textContent=C;C2=captcha();$('cap2').textContent=C2}nc();
 function first(on){$('L').classList.toggle('hide',!!on);$('F').classList.toggle('hide',!on);$('N').classList.add('hide')}
 if(new URLSearchParams(location.search).get('first'))first(1);
 function login(){if($('c').value.trim().toUpperCase()!==C){$('e').textContent='Enter valid characters shown in the image';nc();return}

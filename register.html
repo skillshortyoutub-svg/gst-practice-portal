@@ -73,7 +73,7 @@
 <div class="card scr hide" id="sDone"><h2>Application Submitted</h2><div class="msg">✅ Your application has been successfully submitted. Application Reference Number (ARN): <b id="arnv"></b><br>Status: <span class="st Pending">Pending for Processing</span><br>In real life the acknowledgement is sent by email/SMS within 15 minutes.</div>
 <p>Next: go to <a href="track.html" id="trackLnk">Services › Registration › Track Application Status</a> to follow the application and simulate the tax officer's approval.</p></div>
 </div>
-<script src="common.js"></script><script>
+<script src="common.js"></script><script src="sample.js"></script><script>
 layout();
 const scr=[...document.querySelectorAll('.scr')];function show(id){scr.forEach(s=>s.classList.toggle('hide',s.id!==id));scrollTo(0,0)}
 $('st').innerHTML='<option value="">Select</option>'+Object.entries(STATES).map(([c,n])=>`<option value="${c}">${n}</option>`).join('');
@@ -86,7 +86,7 @@ function partA(){const p=$('pan').value.trim(),e=[];
 if(!$('st').value)e.push('Select State / UT');if(!$('dist').value.trim())e.push('District is required');if(!/^[A-Za-z0-9 .&'()-]{3,99}$/.test($('legal').value.trim()))e.push('Legal Name: 3-99 characters');
 if(!PAN_RE.test(p))e.push('Enter a valid PAN (4th character must be a valid holder type)');if(!/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test($('email').value))e.push('Enter a valid Email Address');
 if(!/^[6-9]\d{9}$/.test($('mob').value))e.push('Enter a valid 10-digit Indian Mobile Number');if($('cA').value.trim().toUpperCase()!==C.A)e.push('Enter valid characters shown in the image');
-if(apps().some(a=>a.A.pan===p&&a.A.state===$('st').value&&a.status!=='Rejected'))e.push('An application/registration already exists for this PAN in the selected State (practice rule)');
+if(typeof SAMPLE!=='undefined'&&SAMPLE.some(s=>s.pan===p))e.push('This PAN belongs to the built-in sample taxpayers; please use your own dummy PAN');if(apps().some(a=>a.A.pan===p&&a.A.state===$('st').value&&a.status!=='Rejected'))e.push('An application/registration already exists for this PAN in the selected State (practice rule)');
 $('eA').innerHTML=e.join('<br>');if(e.length){nc('A');return}
 A={type:$('type').value,state:$('st').value,dist:$('dist').value.trim(),legal:$('legal').value.trim(),pan:p,email:$('email').value.trim(),mob:$('mob').value};
 const m=DB.get('users',[]).filter(u=>u.pan===p);if(m.length){$('mapped').innerHTML=`<table><tr><th>GSTIN</th><th>State</th><th>Status</th></tr>${m.map(u=>`<tr><td>${u.gstin}</td><td>${STATES[u.state]}</td><td><span class="st Approved">${u.status}</span></td></tr>`).join('')}</table>`;show('sMap')}else sendOtpA()}
