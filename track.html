@@ -1,0 +1,29 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Track Status - GST Practice Portal</title><link rel="stylesheet" href="style.css"></head><body>
+<div class="wrap" style="max-width:900px">
+<div class="card" id="app"><h2>Track Application Status <a class="help" href="help.html#registration">? Help</a></h2><p class="crumb">Services › Registration › Track Application Status</p>
+<label>Module</label><select id="mod"><option>Registration</option></select>
+<div class="inline"><label><input type="radio" name="by" value="ARN" checked> ARN</label><label><input type="radio" name="by" value="TRN"> TRN</label></div>
+<input id="q" placeholder="Enter ARN / TRN"><label>Type the characters you see</label><span class="cap" id="cap"></span> <button onclick="nc()">↻</button><input id="c">
+<p class="err" id="e"></p><button class="btn s" onclick="search()">SEARCH</button><div id="res"></div></div>
+<div class="card" id="payment"><h2>Track Payment Status <a class="help" href="help.html#payments">? Help</a></h2><p class="crumb">Services › Payments › Track Payment Status</p>
+<div class="row"><div><label>GSTIN / Other Id *</label><input id="pg"></div><div><label>CPIN *</label><input id="pc" maxlength="14"></div></div><br><button class="btn s" onclick="trackPay()">TRACK STATUS</button><div id="pres"></div></div>
+</div>
+<script src="common.js"></script><script>layout();
+let C;function nc(){C=captcha();$('cap').textContent=C}nc();
+const qs=new URLSearchParams(location.search);if(qs.get('arn')){$('q').value=qs.get('arn')}
+function search(){const v=$('q').value.trim().toUpperCase(),by=document.querySelector('[name=by]:checked').value;if($('c').value.trim().toUpperCase()!==C){$('e').textContent='Enter valid characters shown in the image';nc();return}$('e').textContent='';
+const a=DB.get('apps',[]).find(x=>by==='ARN'?x.arn===v:x.trn===v);if(!a){$('res').innerHTML='<p class="err">No application found for this '+by+'.</p>';return}render(a)}
+function cls(s){return /Approved/.test(s)?'Approved':/Rejected/.test(s)?'Rejected':s==='Draft'?'Draft':'Pending'}
+function render(a){const u=a.gstin&&userBy(a.gstin);$('res').innerHTML=`<br><table><tr><th>ARN</th><td>${a.arn||'-'}</td></tr><tr><th>TRN</th><td>${a.trn}</td></tr><tr><th>Form Number</th><td>GST REG-01</td></tr><tr><th>Form Description</th><td>Application for New Registration</td></tr>
+<tr><th>Legal Name</th><td>${esc(a.A.legal)}</td></tr><tr><th>Submission Date</th><td>${a.submitted||'-'}</td></tr><tr><th>Status</th><td><span class="st ${cls(a.status)}">${a.status}</span></td></tr>${a.gstin?`<tr><th>GSTIN</th><td><b>${a.gstin}</b></td></tr>`:''}</table>
+${a.status==='Pending for Processing'?`<div class="note"><b>Practice only — simulate the tax officer's action:</b><br><button class="btn s" onclick="act('${a.trn}',1)">Approve (REG-06)</button> <button class="btn" onclick="act('${a.trn}',0)">Reject (REG-05)</button></div>`:''}
+${a.status==='Draft'?'<p>Application is still in Draft. <a href="register.html">Complete Part B using your TRN</a>.</p>':''}
+${u&&!u.user?`<div class="msg">🎉 Registration granted. Practice "email" contents:<br>GSTIN: <b>${u.gstin}</b><br>Temporary Password: <b>${u.tempPass}</b><br>Use them on <a href="login.html?first=1">Login › First time login</a> to create your username and password.</div>`:''}`}
+function act(trn,ok){const l=DB.get('apps',[]),a=l.find(x=>x.trn===trn);if(ok){const B=a.B,us=DB.get('users',[]);const g=makeGSTIN(a.A.state,a.A.pan);
+const late=(new Date(a.submitted)-new Date(B.dol))/864e5>30;const u={gstin:g,pan:a.A.pan,state:a.A.state,dist:B.b_dist,legal:a.A.legal,email:a.A.email,mob:a.A.mob,arn:a.arn,trn:a.trn,
+b:{trade:B.trade,const:B.const,comp:B.comp,compCat:B.comp==='Yes'?B.compCat:'',doc:B.doc,reason:B.reason},prom:{name:[B.p_fn,B.p_mn,B.p_ln].filter(Boolean).join(' '),des:B.p_des},as:{name:[B.a_fn,B.a_ln].filter(Boolean).join(' '),des:B.a_des},
+ppob:{addr:B.pp_bno+', '+B.pp_road,city:B.pp_city,pin:B.pp_pin,ward:B.pp_ward,poss:B.pp_poss,nature:B.nat},hsn:B.hsn,effDate:late?today():B.dol,status:'Active',approved:today(),tempPass:'Tmp@'+rnd(4)+'Gp',user:null,pass:null,filing:'Monthly',bank:null};
+us.push(u);DB.set('users',us);a.gstin=g;a.status='Approved'}else a.status='Rejected';DB.set('apps',l);render(a)}
+function trackPay(){const g=$('pg').value.trim().toUpperCase(),c=$('pc').value.trim();const ch=DB.get(g+'_ch',[]).find(x=>x.cpin===c);
+$('pres').innerHTML=ch?`<br><table><tr><th>CPIN</th><td>${ch.cpin}</td></tr><tr><th>Challan Date</th><td>${ch.d}</td></tr><tr><th>Challan Amount</th><td>₹${f(ch.total)}</td></tr><tr><th>Mode</th><td>${ch.mode}</td></tr><tr><th>Status</th><td><span class="st ${ch.st==='Paid'?'Paid':'NotPaid'}">${ch.st}</span></td></tr><tr><th>CIN</th><td>${ch.cin||'-'}</td></tr><tr><th>Expiry</th><td>${ch.exp}</td></tr></table>`:'<p class="err">No challan found for this GSTIN and CPIN.</p>'}
+</script></body></html>

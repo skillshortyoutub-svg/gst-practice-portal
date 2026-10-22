@@ -1,0 +1,145 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>New Registration - GST Practice Portal</title><link rel="stylesheet" href="style.css"></head><body>
+<div class="wrap" style="max-width:960px">
+<p class="crumb">Home › Services › Registration › New Registration</p>
+<!-- Part A -->
+<div class="card scr" id="sA"><h2>New Registration (Form REG-01 practice)</h2>
+<div class="inline"><label><input type="radio" name="mode" checked onchange="mode(0)"> New Registration</label><label><input type="radio" name="mode" id="mTrn" onchange="mode(1)"> Temporary Reference Number (TRN)</label></div>
+<div id="partA"><h3>Part A</h3>
+<label>I am a *</label><select id="type"><option>Taxpayer</option><option>Tax Deductor</option><option>Tax Collector (e-Commerce)</option><option>Non Resident Taxable Person</option></select>
+<div class="row"><div><label>State / UT *</label><select id="st"></select></div><div><label>District *</label><input id="dist"></div></div>
+<label>Legal Name of the Business (As mentioned in PAN) *</label><input id="legal">
+<label>Permanent Account Number (PAN) *</label><input id="pan" maxlength="10" placeholder="e.g. ABCPE1234F" oninput="this.value=this.value.toUpperCase()">
+<div class="note">PAN format: 5 letters + 4 digits + 1 letter. The 4th letter is the holder type (P = Individual, F = Firm, C = Company, H = HUF ...).</div>
+<div class="row"><div><label>Email Address * (of Primary Authorized Signatory)</label><input id="email"></div><div><label>Mobile Number * (+91)</label><input id="mob" maxlength="10"></div></div>
+<label>Type the characters you see in the image below *</label><span class="cap" id="capA"></span> <button onclick="nc('A')">↻</button><input id="cA">
+<p class="err" id="eA"></p><button class="btn s" onclick="partA()">PROCEED</button></div>
+<div id="trnLogin" class="hide"><h3>Login with TRN</h3><label>Temporary Reference Number (TRN) *</label><input id="trnIn">
+<label>Type the characters you see *</label><span class="cap" id="capT"></span> <button onclick="nc('T')">↻</button><input id="cT"><p class="err" id="eT"></p><button class="btn s" onclick="trnLogin()">PROCEED</button></div></div>
+<div class="card scr hide" id="sMap"><h2>Existing registrations mapped to this PAN</h2><div id="mapped"></div><button class="btn s" onclick="sendOtpA()">PROCEED</button></div>
+<div class="card scr hide" id="sOtp"><h2>Verify OTP</h2><div class="msg">Practice OTPs (in real life sent separately to mobile and email, valid 10 minutes):<br>Mobile OTP: <b id="o1"></b> · Email OTP: <b id="o2"></b></div>
+<label>Mobile OTP *</label><input id="i1" maxlength="6"><label>Email OTP *</label><input id="i2" maxlength="6"><p class="err" id="eo"></p><button class="btn s" onclick="vOtpA()">PROCEED</button> <a href="#" onclick="sendOtpA();return false">Click here to resend the OTP</a></div>
+<div class="card scr hide" id="sTrn"><h2>TRN Generated</h2><div class="msg">✅ You have successfully submitted Part A. Your Temporary Reference Number (TRN) is <b id="trnv"></b>.<br>Use the TRN to fill Part B within 15 days; otherwise the TRN and its data are purged.</div><button class="btn s" onclick="mode(1);$('trnIn').value=$('trnv').textContent;show('sA')">PROCEED</button></div>
+<div class="card scr hide" id="sOtpB"><h2>Verify OTP (TRN login)</h2><div class="msg">Practice OTP (same for mobile & email): <b id="o3"></b></div><label>Mobile / Email OTP *</label><input id="i3" maxlength="6"><p class="err" id="eo3"></p><button class="btn s" onclick="vOtpB()">PROCEED</button></div>
+<div class="card scr hide" id="sSaved"><h2>My Saved Applications</h2><div id="savedT"></div></div>
+<!-- Part B -->
+<div class="card scr hide" id="sB"><h2>Application Form — Part B<span style="float:right;font-size:13px">Profile <b id="pct">0</b>% complete</span></h2><div class="prog"><i id="bar" style="width:0"></i></div>
+<div class="tabs" id="tabs"></div>
+<div class="tb" data-t="Business Details"><label>Legal Name of Business</label><input id="b_legal" disabled><label>PAN</label><input id="b_pan" disabled>
+<div class="row"><div><label>Trade Name *</label><input id="trade"></div><div><label>Constitution of Business *</label><select id="const"><option value="">Select</option></select></div></div>
+<div class="row"><div><label>Name of the State</label><input id="b_state" disabled></div><div><label>District *</label><input id="b_dist"></div></div>
+<label>Option for Composition *</label><div class="inline"><label><input type="radio" name="comp" value="No" checked onchange="compT()"> No</label><label><input type="radio" name="comp" value="Yes" onchange="compT()"> Yes</label></div>
+<div id="compBox" class="hide note"><label>Category of Registered Person *</label><select id="compCat"><option>Category A - Manufacturer (1%)</option><option>Category A - Trader / other supplier of goods (1%)</option><option>Category A - Restaurant service (5%)</option><option>Category B - Person under section 10(2A), services (6%)</option></select>
+<label><input type="checkbox" id="compDecl"> I hereby declare that the aforesaid business shall abide by the conditions and restrictions for composition levy.</label></div>
+<div class="row"><div><label>Date of commencement of Business *</label><input type="date" id="doc"></div><div><label>Date on which liability to register arises *</label><input type="date" id="dol"></div></div>
+<label>Are you applying for registration as a casual taxable person? *</label><select id="casual"><option>No</option><option>Yes</option></select>
+<label>Option for registration under Rule 14A *</label><select id="r14a"><option value="">Select</option><option>No</option><option>Yes</option></select>
+<label>Reason to obtain registration *</label><select id="reason"><option value="">Select</option><option>Crossing the Threshold</option><option>Inter-State supply</option><option>Voluntary Basis</option><option>E-Commerce Operator</option><option>Input Service Distributor only</option><option>Others</option></select></div>
+<div class="tb" data-t="Promoter / Partners"><h4>Personal Information</h4><div class="row"><div><label>First Name *</label><input id="p_fn"></div><div><label>Middle Name</label><input id="p_mn"></div><div><label>Last Name</label><input id="p_ln"></div></div>
+<div class="row"><div><label>Name of Father *</label><input id="p_father"></div><div><label>Date of Birth *</label><input type="date" id="p_dob"></div><div><label>Gender *</label><select id="p_gen"><option value="">Select</option><option>Male</option><option>Female</option><option>Others</option></select></div></div>
+<div class="row"><div><label>Mobile Number *</label><input id="p_mob" maxlength="10"></div><div><label>Email Address *</label><input id="p_email"></div></div>
+<h4>Identity Information</h4><div class="row"><div><label>Designation / Status *</label><input id="p_des"></div><div><label>Director Identification Number (DIN) <span id="dinReq"></span></label><input id="p_din" maxlength="8"></div></div>
+<div class="row"><div><label>Are you a citizen of India? *</label><select id="p_cit"><option>Yes</option><option>No</option></select></div><div><label>Permanent Account Number (PAN) *</label><input id="p_pan" maxlength="10" oninput="this.value=this.value.toUpperCase()"></div><div><label>Aadhaar Number</label><input id="p_aad" maxlength="12"></div></div>
+<h4>Residential Address</h4><div class="row"><div><label>Building No./Flat No., Road/Street *</label><input id="p_addr"></div><div><label>PIN Code *</label><input id="p_pin" maxlength="6"></div></div>
+<label>Photograph (JPEG, max 100 KB)</label><input type="file" id="p_photo" accept=".jpg,.jpeg">
+<label>Also Authorized Signatory</label><select id="p_as"><option>No</option><option>Yes</option></select></div>
+<div class="tb" data-t="Authorized Signatory"><label><input type="checkbox" id="a_primary" checked> Primary Authorized Signatory</label><div class="note">If you selected "Also Authorized Signatory = Yes" in the Promoter tab, details are copied here automatically.</div>
+<div class="row"><div><label>First Name *</label><input id="a_fn"></div><div><label>Last Name</label><input id="a_ln"></div><div><label>Designation *</label><input id="a_des"></div></div>
+<div class="row"><div><label>Mobile Number *</label><input id="a_mob" maxlength="10"></div><div><label>Email Address *</label><input id="a_email"></div><div><label>PAN *</label><input id="a_pan" maxlength="10" oninput="this.value=this.value.toUpperCase()"></div></div>
+<label>Proof of appointment of Authorized Signatory (PDF/JPEG, max 1 MB)</label><input type="file" id="a_proof" accept=".pdf,.jpg,.jpeg"></div>
+<div class="tb" data-t="Authorized Representative"><label>Do you have any Authorized Representative? *</label><select id="r_has" onchange="$('repBox').classList.toggle('hide',this.value==='No')"><option>No</option><option>Yes</option></select>
+<div id="repBox" class="hide"><label>Type of Authorized Representative</label><select id="r_type"><option>GST Practitioner</option><option>Other</option></select><label>Enrolment ID (GST Practitioner) / Name</label><input id="r_id"></div></div>
+<div class="tb" data-t="Principal Place of Business"><h4>Address</h4><div class="row"><div><label>Building No./Flat No. *</label><input id="pp_bno"></div><div><label>Road / Street *</label><input id="pp_road"></div></div>
+<div class="row"><div><label>City / Town / Village *</label><input id="pp_city"></div><div><label>State</label><input id="pp_state" disabled></div><div><label>PIN Code *</label><input id="pp_pin" maxlength="6"></div></div>
+<div class="row"><div><label>Sector / Circle / Ward / Charge / Unit *</label><select id="pp_ward"><option value="">Select</option><option>Ward 1 (practice)</option><option>Ward 2 (practice)</option><option>Circle A (practice)</option></select></div><div><label>Center Jurisdiction *</label><select id="pp_cj"><option value="">Select</option><option>Commissionerate X / Division 1 / Range 1 (practice)</option><option>Commissionerate Y / Division 2 / Range 3 (practice)</option></select></div></div>
+<h4>Contact Information</h4><div class="row"><div><label>Office Email Address *</label><input id="pp_email"></div><div><label>Office Mobile Number *</label><input id="pp_mob" maxlength="10"></div></div>
+<label>Nature of possession of premises *</label><select id="pp_poss"><option value="">Select</option><option>Own</option><option>Leased</option><option>Rented</option><option>Consent</option><option>Shared</option><option>Others</option></select>
+<label>Document Upload - Proof of Principal Place of Business *</label><select id="pp_doc"><option value="">Select</option><option>Electricity Bill</option><option>Legal ownership document</option><option>Municipal Khata copy</option><option>Property Tax Receipt</option><option>Rent / Lease Agreement</option><option>Consent Letter</option></select>
+<input type="file" id="pp_file" accept=".pdf,.jpg,.jpeg"><div class="note">Practice: any small file is accepted (PDF/JPEG up to 1 MB). Nothing is uploaded anywhere.</div>
+<label>Nature of Business Activity being carried out at above mentioned premises * (select at least one)</label><div class="inline" id="pp_nat"></div>
+<label>Have Additional Place of Business</label><select id="pp_apob"><option>No</option><option>Yes</option></select></div>
+<div class="tb" data-t="Additional Places of Business"><div id="apobOff" class="note">You selected "No" for Additional Place of Business in the Principal Place of Business tab.</div><div id="apobOn"><label>Number of additional places</label><input type="number" id="ap_n" value="1" min="1" max="9999"><label>Address(es)</label><textarea id="ap_addr"></textarea></div></div>
+<div class="tb" data-t="Goods and Services"><div class="note">Add up to 5 goods (HSN) and 5 services (SAC). Type a code or a word and pick from the list.</div>
+<label>Search HSN Chapter by Name or Code</label><input id="hsnq" oninput="$('hsnr').innerHTML=pickHSN(this.value)"><div id="hsnr"></div><p>Selected: <b id="hsnSel"></b></p></div>
+<div class="tb" data-t="State Specific Information"><label>Professional Tax Employee Code (EC) No.</label><input id="ss_ec"><label>Professional Tax Registration Certificate (RC) No.</label><input id="ss_rc"><label>State Excise License No.</label><input id="ss_exc"><label>Name of the person in whose name Excise License is held</label><input id="ss_excn"></div>
+<div class="tb" data-t="Aadhaar Authentication"><label>Do you want to opt for Aadhaar Authentication of the Promoter/Partner and Primary Authorized Signatory? *</label><select id="aad"><option>Yes</option><option>No</option></select>
+<div class="note">Yes: after submission an authentication link (simulated here) must be completed before the ARN is generated. No: in real life you would need biometric/document verification at a facilitation centre (simulated here). If Rule 14A = Yes, Aadhaar authentication must be Yes.</div></div>
+<div class="tb" data-t="Verification"><label><input type="checkbox" id="decl"> I hereby solemnly affirm and declare that the information given herein above is true and correct to the best of my knowledge and belief and nothing has been concealed therefrom.</label>
+<div class="row"><div><label>Name of Authorized Signatory *</label><select id="v_as"></select></div><div><label>Place *</label><input id="v_place"></div></div>
+<p class="err" id="eB"></p><button class="btn" disabled title="Not available in practice">SUBMIT WITH DSC</button> <button class="btn" disabled title="Not available in practice">SUBMIT WITH E-SIGNATURE</button> <button class="btn s" onclick="submitEVC()">SUBMIT WITH EVC</button></div>
+<p class="err" id="eTab"></p><button class="btn" onclick="prevTab()">BACK</button> <button class="btn s" id="saveBtn" onclick="saveTab()">SAVE &amp; CONTINUE</button></div>
+<div class="card scr hide" id="sEvc"><h2>Submit with EVC</h2><div class="msg">Practice EVC OTP sent to the Authorized Signatory: <b id="o4"></b></div><label>Enter OTP *</label><input id="i4"><p class="err" id="eo4"></p><button class="btn s" onclick="vEvc()">VALIDATE OTP</button></div>
+<div class="card scr hide" id="sAad"><h2>Aadhaar Authentication (simulated e-KYC link)</h2><p>In real life a link is sent to the Promoter and Primary Authorized Signatory. Here you complete it directly.</p>
+<label><input type="checkbox" id="aadCons"> I give consent for Aadhaar authentication (practice)</label><label>Aadhaar Number / VID (any 12 dummy digits) *</label><input id="aadNo" maxlength="12"><div class="msg">Practice Aadhaar OTP: <b id="o5"></b></div><label>OTP *</label><input id="i5"><p class="err" id="eo5"></p><button class="btn s" onclick="vAad()">VALIDATE OTP</button></div>
+<div class="card scr hide" id="sDone"><h2>Application Submitted</h2><div class="msg">✅ Your application has been successfully submitted. Application Reference Number (ARN): <b id="arnv"></b><br>Status: <span class="st Pending">Pending for Processing</span><br>In real life the acknowledgement is sent by email/SMS within 15 minutes.</div>
+<p>Next: go to <a href="track.html" id="trackLnk">Services › Registration › Track Application Status</a> to follow the application and simulate the tax officer's approval.</p></div>
+</div>
+<script src="common.js"></script><script>
+layout();
+const scr=[...document.querySelectorAll('.scr')];function show(id){scr.forEach(s=>s.classList.toggle('hide',s.id!==id));scrollTo(0,0)}
+$('st').innerHTML='<option value="">Select</option>'+Object.entries(STATES).map(([c,n])=>`<option value="${c}">${n}</option>`).join('');
+$('const').innerHTML+=Object.keys(CONST_PAN).map(c=>`<option>${c}</option>`).join('');
+$('pp_nat').innerHTML=['Bonded Warehouse','EOU / STP / EHTP','Export','Factory / Manufacturing','Import','Supplier of Services','Leasing Business','Office / Sale Office','Recipient of Goods or Services','Retail Business','Warehouse / Depot','Wholesale Business','Works Contract'].map(n=>`<label><input type="checkbox" value="${n}"> ${n}</label>`).join('');
+const C={};function nc(k){C[k]=captcha();$('cap'+k).textContent=C[k]}nc('A');nc('T');
+function mode(m){$('partA').classList.toggle('hide',m===1);$('trnLogin').classList.toggle('hide',m===0);$('mTrn').checked=m===1;if(m===0)document.querySelector('[name=mode]').checked=true}
+let A,O={},APP;const apps=()=>DB.get('apps',[]),saveApp=a=>{const l=apps(),i=l.findIndex(x=>x.trn===a.trn);if(i<0)l.push(a);else l[i]=a;DB.set('apps',l)};
+function partA(){const p=$('pan').value.trim(),e=[];
+if(!$('st').value)e.push('Select State / UT');if(!$('dist').value.trim())e.push('District is required');if(!/^[A-Za-z0-9 .&'()-]{3,99}$/.test($('legal').value.trim()))e.push('Legal Name: 3-99 characters');
+if(!PAN_RE.test(p))e.push('Enter a valid PAN (4th character must be a valid holder type)');if(!/^[^@\s]+@[^@\s]+\.[a-z]{2,}$/i.test($('email').value))e.push('Enter a valid Email Address');
+if(!/^[6-9]\d{9}$/.test($('mob').value))e.push('Enter a valid 10-digit Indian Mobile Number');if($('cA').value.trim().toUpperCase()!==C.A)e.push('Enter valid characters shown in the image');
+if(apps().some(a=>a.A.pan===p&&a.A.state===$('st').value&&a.status!=='Rejected'))e.push('An application/registration already exists for this PAN in the selected State (practice rule)');
+$('eA').innerHTML=e.join('<br>');if(e.length){nc('A');return}
+A={type:$('type').value,state:$('st').value,dist:$('dist').value.trim(),legal:$('legal').value.trim(),pan:p,email:$('email').value.trim(),mob:$('mob').value};
+const m=DB.get('users',[]).filter(u=>u.pan===p);if(m.length){$('mapped').innerHTML=`<table><tr><th>GSTIN</th><th>State</th><th>Status</th></tr>${m.map(u=>`<tr><td>${u.gstin}</td><td>${STATES[u.state]}</td><td><span class="st Approved">${u.status}</span></td></tr>`).join('')}</table>`;show('sMap')}else sendOtpA()}
+function sendOtpA(){O.m=rnd(6);O.e=rnd(6);while(O.e===O.m)O.e=rnd(6);$('o1').textContent=O.m;$('o2').textContent=O.e;show('sOtp')}
+function vOtpA(){if($('i1').value!==O.m||$('i2').value!==O.e){$('eo').textContent='Invalid OTP. Please enter the correct Mobile and Email OTP.';return}
+const d=new Date();const trn=rnd(12)+'TRN';APP={trn,A,status:'Draft',created:today(),expiry:new Date(Date.now()+15*864e5).toISOString().slice(0,10),B:{},done:[]};saveApp(APP);$('trnv').textContent=trn;show('sTrn')}
+function trnLogin(){const t=$('trnIn').value.trim().toUpperCase();if($('cT').value.trim().toUpperCase()!==C.T){$('eT').textContent='Enter valid characters shown in the image';nc('T');return}
+APP=apps().find(a=>a.trn===t);if(!APP){$('eT').textContent='Invalid TRN';return}O.b=rnd(6);$('o3').textContent=O.b;show('sOtpB')}
+function vOtpB(){if($('i3').value!==O.b){$('eo3').textContent='Invalid OTP';return}renderSaved();show('sSaved')}
+function renderSaved(){$('savedT').innerHTML=`<table><tr><th>Form No.</th><th>Form Description</th><th>Date of creation</th><th>Status</th><th>Expiry date</th><th>Action</th></tr><tr><td>GST REG-01</td><td>Application for New Registration</td><td>${APP.created}</td><td><span class="st ${APP.status==='Draft'?'Draft':'Pending'}">${APP.status}</span></td><td>${APP.expiry}</td><td>${APP.status==='Draft'?'<button class="btn s" onclick="openB()">✎ Edit</button>':'ARN '+APP.arn}</td></tr></table>
+<div class="note">If the application is not submitted within 15 days of TRN generation, the TRN and all its data are purged.</div>`}
+/* Part B */
+const tbs=[...document.querySelectorAll('.tb')];let cur=0,hsnSel=[];
+function openB(){const a=APP.A;$('b_legal').value=a.legal;$('b_pan').value=a.pan;$('b_state').value=STATES[a.state];$('pp_state').value=STATES[a.state];$('b_dist').value=a.dist;
+$('pp_email').value=a.email;$('pp_mob').value=a.mob;fillFrom(APP.B);renderTabs();tab(0);show('sB')}
+function renderTabs(){$('tabs').innerHTML=tbs.map((t,i)=>`<button onclick="tab(${i})" class="${i===cur?'on':''}">${t.dataset.t} ${APP.done.includes(i)?'<span class="tick">✔</span>':''}</button>`).join('');const p=Math.round(APP.done.length/tbs.length*100);$('pct').textContent=p;$('bar').style.width=p+'%'}
+function tab(i){cur=i;tbs.forEach((t,j)=>t.classList.toggle('hide',i!==j));renderTabs();$('eTab').textContent='';$('saveBtn').classList.toggle('hide',i===tbs.length-1);
+if(i===2&&$('p_as').value==='Yes'){$('a_fn').value=$('p_fn').value;$('a_ln').value=$('p_ln').value;$('a_des').value=$('p_des').value;$('a_mob').value=$('p_mob').value;$('a_email').value=$('p_email').value;$('a_pan').value=$('p_pan').value}
+if(i===5){const on=$('pp_apob').value==='Yes';$('apobOff').classList.toggle('hide',on);$('apobOn').classList.toggle('hide',!on)}
+if(i===9){$('v_as').innerHTML=`<option>${esc(($('a_fn').value+' '+$('a_ln').value).trim())}</option>`}
+const k=$('const').value;$('dinReq').textContent=/Company/.test(k)?'* (mandatory for companies)':'(not mandatory)'}
+function prevTab(){if(cur>0)tab(cur-1)}
+function compT(){$('compBox').classList.toggle('hide',radio('comp')!=='Yes')}
+const radio=n=>(document.querySelector(`[name=${n}]:checked`)||{}).value;
+function pickHSN(q){if(q.length<2)return '';return HSN.filter(h=>h[0].startsWith(q)||h[1].toLowerCase().includes(q.toLowerCase())).map(h=>`<button class="btn" style="margin:2px" onclick="addHSN('${h[0]}')">${h[0]} - ${h[1]}</button>`).join('')||'No Results Found'}
+function addHSN(c){const isS=c.startsWith('99'),n=hsnSel.filter(x=>x.startsWith('99')===isS).length;if(!hsnSel.includes(c)){if(n>=5)return alert('Maximum 5 '+(isS?'services':'goods'));hsnSel.push(c)}$('hsnSel').innerHTML=hsnSel.map(x=>`${x} <a href="#" onclick="hsnSel=hsnSel.filter(y=>y!=='${x}');$('hsnSel').textContent=hsnSel.join(', ');return false">✕</a>`).join(', ')}
+const ids=()=>[...document.querySelectorAll('#sB input:not([type=file]):not([type=radio]):not([disabled]),#sB select,#sB textarea')].filter(e=>e.id);
+function collect(){const o={};ids().forEach(e=>o[e.id]=e.type==='checkbox'?e.checked:e.value);o.comp=radio('comp');o.nat=[...document.querySelectorAll('#pp_nat input:checked')].map(x=>x.value);o.hsn=hsnSel;return o}
+function fillFrom(o){ids().forEach(e=>{if(o[e.id]!==undefined){if(e.type==='checkbox')e.checked=o[e.id];else e.value=o[e.id]}});if(o.comp)document.querySelector(`[name=comp][value=${o.comp}]`).checked=true;compT();
+(o.nat||[]).forEach(v=>{const c=document.querySelector(`#pp_nat input[value="${v}"]`);if(c)c.checked=true});hsnSel=o.hsn||[];$('hsnSel').textContent=hsnSel.join(', ');$('repBox').classList.toggle('hide',$('r_has').value==='No')}
+function fileOk(id,kb){const fl=$(id).files[0];return !fl||fl.size<=kb*1024}
+function validate(i){const v=id=>$(id).value.trim(),e=[],pan=APP.A.pan;
+if(i===0){if(!v('trade'))e.push('Trade Name is required');if(!v('const'))e.push('Select Constitution of Business');else if(!CONST_PAN[v('const')].includes(pan[3]))e.push(`Constitution of Business does not match PAN holder type "${pan[3]}" (CBDT validation, simulated)`);
+if(!v('b_dist'))e.push('District is required');if(radio('comp')==='Yes'&&!$('compDecl').checked)e.push('Accept the composition declaration');if(!v('doc'))e.push('Date of commencement is required');if(!v('dol'))e.push('Date on which liability arises is required');
+if(v('doc')>today())e.push('Date of commencement cannot be a future date (practice rule)');if(!v('r14a'))e.push('Select an option under Rule 14A');if(!v('reason'))e.push('Select Reason to obtain registration');if(v('reason')==='Input Service Distributor only'&&v('r14a')==='Yes')e.push('ISD only is not allowed with Rule 14A = Yes')}
+if(i===1){if(!v('p_fn'))e.push('First Name');if(!v('p_father'))e.push('Name of Father');if(!v('p_dob'))e.push('Date of Birth');else{const a=(Date.now()-new Date(v('p_dob')))/315576e5;if(a<18)e.push('Promoter must be at least 18 years old')}if(!v('p_gen'))e.push('Gender');
+if(!/^[6-9]\d{9}$/.test(v('p_mob')))e.push('Valid Mobile Number');if(!/^\S+@\S+\.\S+$/.test(v('p_email')))e.push('Valid Email');if(!v('p_des'))e.push('Designation / Status');
+if(/Company/.test(v('const'))&&!/^\d{8}$/.test(v('p_din')))e.push('DIN (8 digits) is mandatory for companies');if(!PAN_RE.test(v('p_pan')))e.push('Valid Promoter PAN');if(v('p_aad')&&!/^\d{12}$/.test(v('p_aad')))e.push('Aadhaar must be 12 digits');
+if(!v('p_addr'))e.push('Residential address');if(!/^[1-9]\d{5}$/.test(v('p_pin')))e.push('Valid 6-digit PIN Code');if(!fileOk('p_photo',100))e.push('Photograph must be ≤ 100 KB')}
+if(i===2){if(!v('a_fn'))e.push('First Name');if(!v('a_des'))e.push('Designation');if(!/^[6-9]\d{9}$/.test(v('a_mob')))e.push('Valid Mobile');if(!/^\S+@\S+\.\S+$/.test(v('a_email')))e.push('Valid Email');if(!PAN_RE.test(v('a_pan')))e.push('Valid PAN');if(!fileOk('a_proof',1024))e.push('Proof must be ≤ 1 MB')}
+if(i===3&&v('r_has')==='Yes'&&!v('r_id'))e.push('Enter Enrolment ID / Name of the representative');
+if(i===4){if(!v('pp_bno'))e.push('Building No.');if(!v('pp_road'))e.push('Road / Street');if(!v('pp_city'))e.push('City');if(!/^[1-9]\d{5}$/.test(v('pp_pin')))e.push('Valid PIN Code');if(!v('pp_ward'))e.push('Sector/Circle/Ward');if(!v('pp_cj'))e.push('Center Jurisdiction');
+if(!/^\S+@\S+\.\S+$/.test(v('pp_email')))e.push('Office Email');if(!/^[6-9]\d{9}$/.test(v('pp_mob')))e.push('Office Mobile');if(!v('pp_poss'))e.push('Nature of possession');if(!v('pp_doc'))e.push('Proof document type');if(!fileOk('pp_file',1024))e.push('Document must be ≤ 1 MB');
+if(!document.querySelector('#pp_nat input:checked'))e.push('Select at least one Nature of Business Activity')}
+if(i===5&&$('pp_apob').value==='Yes'&&!v('ap_addr'))e.push('Enter address of additional place(s)');
+if(i===6&&!hsnSel.length)e.push('Add at least one HSN / SAC code');
+if(i===8&&v('r14a')==='Yes'&&v('aad')==='No')e.push('Aadhaar authentication is mandatory when Rule 14A is Yes');
+return e}
+function saveTab(){const e=validate(cur);if(e.length){$('eTab').innerHTML='Please correct: '+e.join(', ');return}APP.B=collect();if(!APP.done.includes(cur))APP.done.push(cur);saveApp(APP);if(cur<tbs.length-1)tab(cur+1)}
+let EV;function submitEVC(){const e=[];for(let i=0;i<tbs.length-1;i++){if(validate(i).length)e.push(tbs[i].dataset.t)}if(!$('decl').checked)e.push('Verification declaration');if(!$('v_place').value.trim())e.push('Place');
+$('eB').innerHTML=e.length?'Complete / correct these sections first: '+e.join(', '):'';if(e.length)return;APP.B=collect();APP.done=tbs.map((_,i)=>i);saveApp(APP);EV=rnd(6);$('o4').textContent=EV;show('sEvc')}
+function finish(){const d=new Date();APP.arn='AA'+APP.A.state+String(d.getMonth()+1).padStart(2,'0')+String(d.getFullYear()).slice(2)+rnd(6)+'X';APP.status='Pending for Processing';APP.submitted=today();APP.aadhaar=APP.B.aad==='Yes'?'Authenticated (simulated)':'Biometric/document verification (simulated)';saveApp(APP);
+$('arnv').textContent=APP.arn;$('trackLnk').href='track.html?arn='+APP.arn;show('sDone')}
+function vEvc(){if($('i4').value!==EV){$('eo4').textContent='Invalid OTP';return}APP.status='Pending for Validation';saveApp(APP);if(APP.B.aad==='Yes'){O.a=rnd(6);$('o5').textContent=O.a;show('sAad')}else{alert('Aadhaar authentication not opted. In real life you must visit the designated facilitation centre for biometric/document verification within 15 days. Simulated as completed.');finish()}}
+function vAad(){if(!$('aadCons').checked||!/^\d{12}$/.test($('aadNo').value)||$('i5').value!==O.a){$('eo5').textContent='Give consent, enter 12-digit Aadhaar/VID and correct OTP';return}finish()}
+</script></body></html>

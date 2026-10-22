@@ -1,0 +1,10 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Search Taxpayer - GST Practice Portal</title><link rel="stylesheet" href="style.css"></head><body>
+<div class="wrap" style="max-width:900px"><div class="card"><h2>Search Taxpayer <a class="help" href="help.html#search">? Help</a></h2>
+<div class="tabs"><button id="t_gstin" onclick="tb('gstin')">Search by GSTIN/UIN</button><button id="t_pan" onclick="tb('pan')">Search by PAN</button><button id="t_comp" onclick="tb('comp')">Search Composition Taxpayer</button></div>
+<label id="ql">GSTIN/UIN of the Taxpayer *</label><input id="q" oninput="this.value=this.value.toUpperCase()"><label>Type the characters you see *</label><span class="cap" id="cap"></span> <button onclick="nc()">↻</button><input id="c">
+<p class="err" id="e"></p><button class="btn s" onclick="go()">SEARCH</button><div id="res"></div></div></div>
+<script src="common.js"></script><script>layout();let C,M='gstin';function nc(){C=captcha();$('cap').textContent=C}nc();
+function tb(m){M=m;['gstin','pan','comp'].forEach(x=>$('t_'+x).classList.toggle('on',x===m));$('ql').textContent=m==='pan'?'Permanent Account Number (PAN) *':'GSTIN/UIN of the Taxpayer *';$('res').innerHTML=''}
+tb(location.hash.slice(1)||'gstin');window.onhashchange=()=>tb(location.hash.slice(1)||'gstin');
+function go(){if($('c').value.trim().toUpperCase()!==C){$('e').textContent='Enter valid characters shown in the image';nc();return}$('e').textContent='';nc();$('c').value='';const v=$('q').value;$('res').innerHTML='<br>'+(M==='gstin'?searchTP(v):M==='pan'?searchPAN(v):searchComp(v))}
+</script></body></html>

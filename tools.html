@@ -1,0 +1,4 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>User Services - GST Practice Portal</title><link rel="stylesheet" href="style.css"></head><body>
+<div class="wrap" style="max-width:900px"><div class="card" id="hsn"><h2>Search HSN / SAC</h2><input id="hq" placeholder="Enter code or description" oninput="$('hr').innerHTML=hsnSearch(this.value)"><div id="hr"></div><div class="note">Small sample list for practice only.</div></div>
+<div class="card" id="calc"><h2>GST Calculator</h2><div id="cbox"></div></div></div>
+<script src="common.js"></script><script>layout();$('hr').innerHTML=hsnSearch('');$('cbox').innerHTML=calcHTML()</script></body></html>
