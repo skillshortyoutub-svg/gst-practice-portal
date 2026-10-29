@@ -250,7 +250,7 @@ if(ov){u=ov;rem={};H.forEach(h=>rem[h]=n2(L[h]-['igst','cgst','sgst','cess'].red
 const nil=isNil3(d),lf=lateFee(P3,nil),cash=cashBal(),need={},req={};const si=d.t51.decl?d.t51.int:zero();
 H.forEach(h=>{const tax=Math.max(0,rem[h])+(+d.t311i[h]||0),rc=+d.t31d[h]||0,int=+si[h]||0,fee=lf[h]||0;need[h]={tax:n2(tax+rc),oth:n2(tax),rc:n2(rc),int,fee};req[h]={tax:Math.max(0,n2(tax+rc-cash[h+'_tax'])),interest:Math.max(0,int-cash[h+'_interest']),fee:Math.max(0,fee-cash[h+'_fee'])}});return {d,L,C,u,rem,need,req,cash,bal,net}}
 let OV=null;
-function payView(){const x=payCalc(OV);const addl=n2(H.reduce((a,h)=>a+x.req[h].tax+x.req[h].interest+x.req[h].fee,0));const can={igst:['igst','cgst','sgst'],cgst:['cgst','igst'],sgst:['sgst','igst'],cess:['cess']};
+function payView(){if(!$('pv')){P3=P3||S.p;CURP=P3;land3b();if(!$('pv'))return}const x=payCalc(OV);const addl=n2(H.reduce((a,h)=>a+x.req[h].tax+x.req[h].interest+x.req[h].fee,0));const can={igst:['igst','cgst','sgst'],cgst:['cgst','igst'],sgst:['sgst','igst'],cess:['cess']};
 const itcCell=(h,s)=>can[s].includes(h)?`<input type="number" class="itcu" id="u_${s}_${h}" value="${n2((x.u[s]||{})[h]||0)}" style="width:90px">`:'<span class="na">-</span>';
 $('pv').innerHTML=`<div class="card" id="pay61"><h3>6.1 Payment of tax</h3>
 <h4>Cash and ITC available as on date (ITC includes this period's net ITC)</h4><table><tr><th>Description</th><th>Cash Ledger: Tax (₹)</th><th>Interest (₹)</th><th>Late Fee (₹)</th><th>Credit Ledger balance incl. current ITC (₹)</th></tr>${H.map(h=>`<tr><td>${HN[h]}</td><td>${f(x.cash[h+'_tax'])}</td><td>${f(x.cash[h+'_interest'])}</td><td>${f(x.cash[h+'_fee'])}</td><td>${f(x.C[h])}</td></tr>`).join('')}</table>
