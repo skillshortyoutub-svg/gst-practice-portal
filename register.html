@@ -1,20 +1,20 @@
 <!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>New Registration - GST Practice Portal</title><link rel="stylesheet" href="style.css"></head><body>
-<div class="wrap" style="max-width:960px">
+<div class="wrap">
 <p class="crumb">Home › Services › Registration › New Registration</p>
 <!-- Part A -->
-<div class="card scr" id="sA"><h2>New Registration (Form REG-01 practice)</h2>
+<div class="card scr" id="sA"><div class="stepper"><div class="on"><i>1</i>User Credentials</div><b></b><div><i>2</i>OTP Verification</div></div><div class="pform"><h2>New Registration</h2><p class="mandl">indicates mandatory fields</p>
 <div class="inline"><label><input type="radio" name="mode" checked onchange="mode(0)"> New Registration</label><label><input type="radio" name="mode" id="mTrn" onchange="mode(1)"> Temporary Reference Number (TRN)</label></div>
-<div id="partA"><h3>Part A</h3>
-<label>I am a *</label><select id="type"><option>Taxpayer</option><option>Tax Deductor</option><option>Tax Collector (e-Commerce)</option><option>Non Resident Taxable Person</option></select>
-<div class="row"><div><label>State / UT *</label><select id="st"></select></div><div><label>District *</label><input id="dist"></div></div>
-<label>Legal Name of the Business (As mentioned in PAN) *</label><input id="legal">
-<label>Permanent Account Number (PAN) *</label><input id="pan" maxlength="10" placeholder="e.g. ABCPE1234F" oninput="this.value=this.value.toUpperCase()">
-<div class="note">PAN format: 5 letters + 4 digits + 1 letter. The 4th letter is the holder type (P = Individual, F = Firm, C = Company, H = HUF ...).</div>
-<div class="row"><div><label>Email Address * (of Primary Authorized Signatory)</label><input id="email"></div><div><label>Mobile Number * (+91)</label><input id="mob" maxlength="10"></div></div>
+<div id="partA">
+<label>I am a *</label><select id="type"><option value="">Select</option><option selected>Taxpayer</option><option>Tax Deductor</option><option>Tax Collector (e-Commerce)</option><option>Non Resident Taxable Person</option></select>
+<label>State/UT *</label><select id="st" onchange="distOpts()"></select><label>District *</label><select id="dist"><option value="">Select</option></select>
+<label>Legal Name of the Business <small>(As mentioned in PAN)</small> *</label><input id="legal" placeholder="Enter Legal Name of the Business">
+<label>Permanent Account Number (PAN) *</label><input id="pan" maxlength="10" placeholder="Enter Permanent Account Number (PAN)" oninput="this.value=this.value.toUpperCase()">
+<p class="ihelp">Practice tip: PAN is 5 letters + 4 digits + 1 letter; the 4th letter is the holder type (P, F, C, H ...).</p>
+<label>Email Address *</label><div class="igrp"><span>&#9993;</span><input id="email" placeholder="Enter Email Address"></div><p class="ihelp">OTP will be sent to this Email Address</p><label>Mobile Number *</label><div class="igrp"><span>+91</span><input id="mob" maxlength="10" placeholder="Enter Mobile Number"></div><p class="ihelp">Separate OTP will be sent to this mobile number</p>
 <label>Type the characters you see in the image below *</label><span class="cap" id="capA"></span> <button onclick="nc('A')">↻</button><input id="cA">
-<p class="err" id="eA"></p><button class="btn s" onclick="partA()">PROCEED</button></div>
+<p class="err" id="eA"></p><button class="btn s" style="width:100%" onclick="partA()">PROCEED</button></div>
 <div id="trnLogin" class="hide"><h3>Login with TRN</h3><label>Temporary Reference Number (TRN) *</label><input id="trnIn">
-<label>Type the characters you see *</label><span class="cap" id="capT"></span> <button onclick="nc('T')">↻</button><input id="cT"><p class="err" id="eT"></p><button class="btn s" onclick="trnLogin()">PROCEED</button></div></div>
+<label>Type the characters you see *</label><span class="cap" id="capT"></span> <button onclick="nc('T')">↻</button><input id="cT"><p class="err" id="eT"></p><button class="btn s" onclick="trnLogin()">PROCEED</button></div></div></div>
 <div class="card scr hide" id="sMap"><h2>Existing registrations mapped to this PAN</h2><div id="mapped"></div><button class="btn s" onclick="sendOtpA()">PROCEED</button></div>
 <div class="card scr hide" id="sOtp"><h2>Verify OTP</h2><div class="msg">Practice OTPs (in real life sent separately to mobile and email, valid 10 minutes):<br>Mobile OTP: <b id="o1"></b> · Email OTP: <b id="o2"></b></div>
 <label>Mobile OTP *</label><input id="i1" maxlength="6"><label>Email OTP *</label><input id="i2" maxlength="6"><p class="err" id="eo"></p><button class="btn s" onclick="vOtpA()">PROCEED</button> <a href="#" onclick="sendOtpA();return false">Click here to resend the OTP</a></div>
@@ -76,6 +76,7 @@
 <script src="common.js"></script><script src="sample.js"></script><script>
 layout();
 const scr=[...document.querySelectorAll('.scr')];function show(id){scr.forEach(s=>s.classList.toggle('hide',s.id!==id));scrollTo(0,0)}
+function distOpts(){const c=$('st').value,n=STATES[c]||'';$('dist').innerHTML='<option value="">Select</option>'+(c?[(typeof CITY!=='undefined'&&CITY[c]?CITY[c][0]:n+' City'),n+' North',n+' South',n+' Central','Other district (practice)'].map(d=>`<option>${d}</option>`).join(''):'')}
 $('st').innerHTML='<option value="">Select</option>'+Object.entries(STATES).map(([c,n])=>`<option value="${c}">${n}</option>`).join('');
 $('const').innerHTML+=Object.keys(CONST_PAN).map(c=>`<option>${c}</option>`).join('');
 $('pp_nat').innerHTML=['Bonded Warehouse','EOU / STP / EHTP','Export','Factory / Manufacturing','Import','Supplier of Services','Leasing Business','Office / Sale Office','Recipient of Goods or Services','Retail Business','Warehouse / Depot','Wholesale Business','Works Contract'].map(n=>`<label><input type="checkbox" value="${n}"> ${n}</label>`).join('');
