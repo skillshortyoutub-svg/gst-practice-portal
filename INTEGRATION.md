@@ -37,9 +37,12 @@ gpp-einv-result (success):  Irn, AckNo, AckDt ("yyyy-mm-dd hh:mm:ss" IST), Signe
                   QrCodeImage ("data:image/png;base64,…" with a PRACTICE mark), Status "ACT",
                   EwbNo, EwbDt, EwbValidTill (null when there is no EwbDtls or no vehicle / Part-B),
                   SellerGstin, DocNo, DocTyp, FY
-gpp-einv-result (duplicate): status "0", errors [2150], InfoDtls [ { InfCd: "DUPIRN", Desc: { AckNo, AckDt, Irn } } ]
+gpp-einv-result (duplicate): status "0", errors [ { ErrorCode: "2150", ErrorMessage, Irn, AckNo, AckDt, Status } ],
+                  InfoDtls [ { InfCd: "DUPIRN", Desc: { Irn, AckNo, AckDt, Status: "ACT" | "CNL", EwbNo? } } ],
+                  and the same Irn/AckNo/AckDt/Status at top level
 gpp-ewb-result:   ewayBillNo (12 digits), ewayBillDate, validUpto ("dd/mm/yyyy hh:mm:ss AM/PM" IST, null when there is no Part-B),
-                  validUptoISO, alert, fromGstin, docNo
+                  validUptoISO (now "yyyy-mm-ddThh:mm:ss+05:30"), alert, fromGstin, docNo,
+                  plus NIC-style EwbNo, EwbDt, EwbValidTill ("yyyy-mm-dd hh:mm:ss" IST), Irn (linked IRN or null), TimeZone
 gpp-cancel-result: kind "einv" | "ewb", Irn + CancelDate, or ewayBillNo + cancelDate
 ```
 
@@ -146,3 +149,15 @@ Intra-State example (19 → 19): set the buyer to `19AACFB7781C1ZG` with `Pos`/`
 
 ## Sample cancel payloads
 `{"irn":"<64-hex>","CnlRsn":"2","CnlRem":"Wrong quantity"}` and `{"ewbNo":"1xxxxxxxxxxx","CnlRsn":"3"}`
+
+## v9 changes (bridge fixes)
+
+- **All times are IST (Asia/Kolkata)**, whatever the browser time zone. `AckDt`, `EwbDt` and `EwbValidTill` use the NIC format `YYYY-MM-DD HH:mm:ss`. `ewayBillDate`/`validUpto` keep the EWB format `dd/mm/yyyy hh:mm:ss AM/PM`. The portal screens also show IST, with an "IST" suffix. Tested with browser TZ set to UTC, America/Los_Angeles, Asia/Kolkata and Pacific/Kiritimati.
+- **IRN on EWB:** the EWB record stores the IRN when it is made together with the IRN (`EwbDtls`), or by a separate `ewb:` call carrying `Irn`. A matching seller + docNo e-invoice also links automatically. The e-invoice record gets `ewbNo` back. The EWB page and list show the IRN.
+- **EWB by IRN (NIC style):** `ewb:` payload `{ "Irn": "<64 hex>", "Distance": 300, "TransMode": "1", "TransId": "...", "TransName": "...", "VehNo": "MH12AB1234", "VehType": "R" }`. The other fields are taken from the stored e-invoice.
+- **Duplicate 2150:** see above (`Status` is `ACT` or `CNL`).
+- **SignedQRCode** is a real JWT: `base64url(header).base64url(payload).base64url(signature)`.
+  - Header: `{"alg":"HS256","typ":"JWT","kid":"PRACTICE-NOT-NIC"}`.
+  - Payload: `{ data: "<JSON string: SellerGstin, BuyerGstin, DocNo, DocTyp, DocDt, TotInvVal, ItemCnt, MainHsnCode, Irn, IrnDt>", iss, PRACTICE: true, practice_note, iat }`.
+  - Signature: HMAC-SHA256 with the public practice key `GST-PRACTICE-PORTAL-PRACTICE-KEY-NOT-NIC`. This is not secret and not valid at NIC.
+  - `QrCodeImage` encodes exactly this JWT (ECC level M; the PRACTICE label sits below the quiet zone), so it scans.
