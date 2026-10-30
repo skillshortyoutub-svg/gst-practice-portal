@@ -164,3 +164,8 @@ const US5=['My Saved Applications','View / Download Certificates','View Notices 
 (function(){const r=MENU.find(m=>m[0]==='Returns');if(r)r[1].splice(r[1].indexOf('GSTR-2A / 2B')+1,0,'GSTR-2A','GSTR-2B','Invoice Management System (IMS)');const u=MENU.find(m=>m[0]==='User Services');if(u)u[1]=US5;
 if($('menu'))$('menu').innerHTML=MENU.map(([g,items])=>items?`<h5>${g}</h5>`+items.map(i=>`<button onclick="show('${i}')">${i}</button>`).join(''):`<button onclick="show('${g}')">${g}</button>`).join('');
 const h0=decodeURIComponent(location.hash.slice(1));if(h0&&V[h0]&&CUR!==h0)show(h0)})();
+/* ---------- deep links from the Tally lab bridge: #einv/<irn>, #ewb/<no> ---------- */
+function deepLink(e){const h=decodeURIComponent((e?location.hash:(window._h0||location.hash)).slice(1));let m;
+if((m=h.match(/^einv\/([0-9a-f]{64})$/))){if(!einv().some(x=>x.irn===m[1]))return alert('IRN not found for '+G+' (practice records are saved under the seller GSTIN)');show('e-Invoice');eiView(m[1]);$('eiOut').scrollIntoView()}
+else if((m=h.match(/^ewb\/(\d{12})$/))){if(!ewbs().some(x=>x.no===m[1]))return alert('E-way bill not found for '+G);show('e-Way Bill');ewbView(m[1]);$('ewbOut').scrollIntoView()}}
+window.addEventListener('hashchange',()=>deepLink(1));deepLink();
