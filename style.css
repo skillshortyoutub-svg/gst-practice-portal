@@ -220,3 +220,6 @@ td input,td select{padding:4px 6px;height:30px;font-size:13px}td select{min-widt
 .tscroll{overflow-x:auto;margin:8px 0}.ledT{font-size:12px;min-width:100%}.ledT th{font-size:11.5px;vertical-align:middle;text-align:center}.ledT td{white-space:normal;min-width:60px}.ledT tr.sub td{background:#f4f7fa;font-weight:600}
 #chT td:first-child{white-space:nowrap;font-weight:600}
 .ledT td.n,.ledT th.n{text-align:right;white-space:nowrap}
+/* v13 */
+.pager{margin:8px 0}.pager a{display:inline-block;padding:4px 10px;border:1px solid #ccd;margin-right:2px;text-decoration:none}.pager a.on{background:#2c4e86;color:#fff}
+#chH td,#chH th{text-align:center}#chH td.n{text-align:right}#chMsg{background:#dff0d8;color:#2b6a2b;font-weight:bold}
