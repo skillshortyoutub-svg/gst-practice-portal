@@ -10,8 +10,8 @@ const R=sr5(G+p),act=SAMPLE.filter(s=>s.status==='Active'&&(!s.b||s.b.comp!=='Ye
 const tx=(s,val,rate)=>{const t=val*rate/100;return (s.state||s)===U.state?{igst:0,cgst:n2(t/2),sgst:n2(t/2),cess:0}:{igst:n2(t),cgst:0,sgst:0,cess:0}};
 const day=()=>p+'-'+String(2+Math.floor(R()*24)).padStart(2,'0'),amt=(a,b)=>Math.round((a+R()*(b-a))/100)*100,pm=pmon(p,1);
 const mk=(sec,s,o)=>{const val=o.val,rate=o.rate==null?18:o.rate,t=o.t||tx(s,val,rate);const d={id:'X'+sec+p.replace('-','')+(i++),sec,x:1,per:p,sup:s.gstin,supName:o.name||s.legal,state:s.state,no:o.no,date:o.date||day(),val,rate,tot:n2(val+t.igst+t.cgst+t.sgst+(t.cess||0)),pos:U.state,rc:o.rc||'No',ntype:o.nt||'',filedOn:nextMonth(p,9+Math.floor(R()*2)),cut:11,itc:'Yes',why:'',...t,...(o.ex||{})};L.push(d);return d};
-let s=pk();mk('B2BA',s,{val:amt(20000,60000),no:'SUP/A'+Math.floor(1000+R()*8999),ex:{tbl:'9A',origNo:'SUP/'+Math.floor(1000+R()*8999),origDate:pm+'-12'}});
-s=pk();mk('CDNRA',s,{val:amt(2000,6000),nt:'C',no:'CN/A'+Math.floor(100+R()*899),ex:{tbl:'9C',origNo:'CN/'+Math.floor(100+R()*899),origDate:pm+'-20'}});
+let s=pk();const sA=s;mk('B2BA',s,{val:amt(20000,60000),no:'SUP/A'+Math.floor(1000+R()*8999),ex:{tbl:'9A',origNo:'SUP/'+Math.floor(1000+R()*8999),origDate:pm+'-12'}});
+s=pk();mk('CDNRA',sA,/* same supplier as the amended invoice, so 4A(5) never nets negative */{val:amt(2000,6000),nt:'C',no:'CN/A'+Math.floor(100+R()*899),ex:{tbl:'9C',origNo:'CN/'+Math.floor(100+R()*899),origDate:pm+'-20'}});
 s=pk();mk('B2B',s,{val:amt(15000,30000),rate:5,rc:'Yes',no:'RCM/'+Math.floor(100+R()*899),ex:{tbl:'4A',it:'Regular B2B'}});
 s=pk();mk('ECO',s,{val:amt(5000,15000),rate:5,name:s.legal+' (ECO u/s 9(5))',no:'ECO/'+Math.floor(1000+R()*8999),ex:{tbl:'ECO'}});
 s=pk();const isd={...s,legal:s.legal+' (ISD)'};mk('ISD',isd,{val:0,name:isd.legal,no:'ISD/'+Math.floor(100+R()*899),t:{igst:amt(3000,9000),cgst:0,sgst:0,cess:0},ex:{dtype:'ISD Invoice',elig:'Y'}});
