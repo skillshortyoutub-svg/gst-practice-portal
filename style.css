@@ -211,3 +211,12 @@ body.hc{filter:contrast(1.25)}
 /* table-cell controls: compact padding so values like 18 / 28 are not clipped */
 td input,td select{padding:4px 6px;height:30px;font-size:13px}td select{min-width:58px;padding-right:2px}
 /* v10 dashboard profile + quick links */.dprof{display:flex;gap:16px;margin:16px 0;flex-wrap:wrap}.dpc{flex:1 1 300px;background:#fff;border:1px solid #d9dee3;border-radius:4px;padding:12px 16px}.dpc h4{margin:0 0 8px;color:#0b1e59}.qlinks{list-style:none;padding:0;margin:0}.qlinks li{padding:6px 0;border-bottom:1px solid #eef1f4;display:flex;justify-content:space-between}
+/* v11 dashboard profile/quick links in portal style: navy header strip, white body, thin rule list */
+.dprof{display:flex;gap:20px;margin:20px 0 8px;flex-wrap:wrap;align-items:stretch}.dpc{flex:1 1 320px;background:#fff;border:1px solid #c9d1d9;border-radius:0;padding:0;box-shadow:0 1px 2px rgba(0,0,0,.06)}
+.dpc h4{margin:0;padding:9px 14px;background:#2c4e86;color:#fff;font-size:15px;font-weight:600}.dpc .kv{margin:0;border:0;width:100%}.dpc .kv th,.dpc .kv td{border:0;border-bottom:1px solid #eef1f4;padding:7px 14px;text-align:left;font-size:13px}.dpc .kv th{width:42%;color:#555;font-weight:600;background:none}
+.dpc>a{display:block;padding:9px 14px;text-align:right;font-size:13px;color:#2c4e86}.qlinks{list-style:none;padding:0;margin:0}.qlinks li{padding:8px 14px;border-bottom:1px solid #eef1f4;display:flex;justify-content:space-between;font-size:13px}.qlinks li a{color:#2c4e86;text-decoration:none}.qlinks li a:before{content:'› ';color:#17a2b8;font-weight:700}.qlinks li a:hover{text-decoration:underline}
+/* ledgers */
+.lgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:14px}.lgbox{border:1px solid #c9d1d9;background:#fff}.lgbox h4{margin:0;padding:8px 12px;background:#2c4e86;color:#fff;font-size:14px}.lgbox .big{font-size:20px;font-weight:600;color:#0b1e59;padding:10px 12px;margin:0}.lgbox a{display:block;padding:0 12px 10px;color:#2c4e86}
+.tscroll{overflow-x:auto;margin:8px 0}.ledT{font-size:12px;min-width:100%}.ledT th{font-size:11.5px;vertical-align:middle;text-align:center}.ledT td{white-space:normal;min-width:60px}.ledT tr.sub td{background:#f4f7fa;font-weight:600}
+#chT td:first-child{white-space:nowrap;font-weight:600}
+.ledT td.n,.ledT th.n{text-align:right;white-space:nowrap}
