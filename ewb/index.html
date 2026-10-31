@@ -1,0 +1,21 @@
+<!DOCTYPE html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>e-Way Bill Practice System - Login</title><link rel="stylesheet" href="ewb.css"></head><body>
+<div class="pb">⚠ PRACTICE / TRAINING SIMULATOR ONLY – not the official e-Way Bill system. No real e-way bills are generated. Use dummy data only.</div>
+<div class="hd"><div class="lg">GP</div><div><h1>e-Way Bill Practice System</h1><small>Part of GST Practice Portal · learning simulator</small></div><div class="r"><a href="../index.html">GST Practice Portal home</a></div></div><div class="nav"></div>
+<div class="login"><div class="pt">Login</div><div class="bx">
+<label class="req">Username</label><input id="u" autocomplete="off" placeholder="Username"><label class="req">Password</label><input id="p" type="password">
+<label class="req">Enter Captcha</label><span class="cap" id="cap"></span> <button class="bt g" onclick="nc()">↻</button><input id="c">
+<p class="err" id="e"></p><button class="bt" id="go" onclick="xLogin()">LOGIN</button>
+<div id="sso"></div>
+<p class="note">Demo users (shared with GST Practice Portal): <code>demo_monthly</code>, <code>demo_qrmp</code>, <code>demo_comp</code>, <code>demo_large</code>, <code>demo_wb</code> · Password <code>Demo@1234</code></p>
+<p>Quick demo login: <span id="dl"></span></p>
+<p><a href="#" onclick="location.href='main.html#Officer Verification (Simulation)';sessionStorage.setItem('ewb_officer','1');return false">Officer verification simulation (no login)</a> · <a href="main.html#Enrolment for Transporters" onclick="sessionStorage.setItem('ewb_officer','1')">Enrolment for Transporters</a></p>
+</div></div></div><div class="foot">Practice simulator · fictional data · not affiliated with any government system</div>
+<script src="../common.js"></script><script src="../sample.js"></script><script src="../demo.js"></script><script>
+let C;function nc(){C=captcha();$('cap').textContent=C}nc();
+$('dl').innerHTML=DEMO.map(d=>`<button class="bt b" onclick="xDemo('${d.key}')">${d.key}</button>`).join('');
+function go(g){sessionStorage.setItem('ewb_session',g);sessionStorage.removeItem('ewb_officer');location.href='main.html'}
+function xDemo(k){const d=DEMO.find(x=>x.key===k),g=demoGSTIN(d);if(!DB.get('users',[]).some(u=>u.gstin===g&&u.demo))seedDemo(d);go(g)}
+function xLogin(){if($('c').value.trim().toUpperCase()!==C){$('e').textContent='Invalid Captcha';nc();return}
+const u=DB.get('users',[]).find(x=>x.user&&x.user===$('u').value.trim()&&x.pass===$('p').value);if(!u){$('e').textContent='Invalid Username or Password';nc();return}go(u.gstin)}
+const s=sessionStorage.getItem('gpp_session'),su=s&&userBy(s);if(su)$('sso').innerHTML=`<p class="ok">You are signed in to GST Practice Portal as ${esc(su.legal)}.</p><button class="bt b" id="ssoGo" onclick="go('${s}')">Continue to e-Way Bill system</button>`;
+</script></body></html>
